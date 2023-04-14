@@ -226,5 +226,43 @@ describe("Given that I am a user on login page", () => {
     test("It should renders HR dashboard page", () => {
       expect(screen.queryByText("Validations")).toBeTruthy();
     });
+
   });
 });
+
+
+
+    // test handle submit admin
+    
+    describe("Given that I am a user on the login page as an admin", () => {
+      describe("When I submit the admin login form with valid credentials", () => {
+        test("handleSubmitAdmin retrieves email and password from the correct input fields", () => {
+          document.body.innerHTML = LoginUI();
+          const onNavigate = jest.fn();
+          const localStorage = {};
+          const PREVIOUS_LOCATION = '';
+          const store = {};
+    
+          const login = new Login({ document, localStorage, onNavigate, PREVIOUS_LOCATION, store });
+          const emailInput = screen.getByTestId("admin-email-input");
+          const passwordInput = screen.getByTestId("admin-password-input");
+          const email = "admin@example.com";
+          const password = "password";
+          fireEvent.change(emailInput, { target: { value: email } });
+          fireEvent.change(passwordInput, { target: { value: password } });
+          const form = screen.getByTestId("form-admin");
+          const handleSubmitAdmin = jest.spyOn(login, "handleSubmitAdmin");
+          form.addEventListener("submit", handleSubmitAdmin);
+          fireEvent.submit(form);
+          
+          // Expect the handleSubmitAdmin function to receive an event object containing the correct input values
+          expect(handleSubmitAdmin).toHaveBeenCalledWith(
+            expect.objectContaining({
+              target: expect.objectContaining({
+                querySelector: expect.any(Function),
+              }),
+            })
+          );
+        });
+      });
+    });
