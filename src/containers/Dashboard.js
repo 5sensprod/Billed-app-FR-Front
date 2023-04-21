@@ -144,13 +144,18 @@ export default class {
         .html("")
       this.counter ++
     }
-
+  
+    // Pour chaque ticket, on vérifie si un gestionnaire d'événement click a déjà été attaché
+    // Si ce n'est pas le cas, on ajoute la classe 'click-handler-attached' et on attache un nouveau gestionnaire d'événement
     bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      const ticket = $(`#open-bill${bill.id}`)
+      if (!ticket.hasClass("click-handler-attached")) {
+        ticket.addClass("click-handler-attached")
+        ticket.click((e) => this.handleEditTicket(e, bill, bills))
+      }
     })
-
+  
     return bills
-
   }
 
   getBillsAllUsers = () => {
