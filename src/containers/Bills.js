@@ -27,9 +27,9 @@ export default class {
     $('#modaleFile').modal('show')
   }
 
-  getBills = () => {
-    if (this.store) {
-      return this.store
+getBills = () => {
+  if (this.store) {
+    return this.store
       .bills()
       .list()
       .then(snapshot => {
@@ -38,12 +38,11 @@ export default class {
             try {
               return {
                 ...doc,
-                date: formatDate(doc.date),
+                // utilisation de la date formatée
+                formattedDate: formatDate(doc.date),
                 status: formatStatus(doc.status)
               }
             } catch(e) {
-              // if for some reason, corrupted data was introduced, we manage here failing formatDate function
-              // log the error and return unformatted date in that case
               console.log(e,'for',doc)
               return {
                 ...doc,
@@ -52,9 +51,11 @@ export default class {
               }
             }
           })
-          console.log('length', bills.length)
+          // tri des factures par date décroissante
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
+        console.log('length', bills.length)
         return bills
       })
-    }
   }
+}
 }
