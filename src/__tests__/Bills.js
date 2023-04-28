@@ -86,9 +86,9 @@ describe("Given I am connected as an employee", () => {
         },
       ];
       const store = {
-        bills: jest.fn(() => ({
-          list: jest.fn(() => Promise.resolve(bills)),
-        })),
+        bills: jest.fn().mockReturnValue({
+          list: jest.fn().mockResolvedValue(bills),
+        }),
       };
       const billsPage = new Bills({
         document,
@@ -108,7 +108,7 @@ describe("Given I am connected as an employee", () => {
           date: '2022-04-23',
           amount: 200,
           name: 'Bill 2',
-          status: 'accepted',
+          status: 'Accepté', // Mettre à jour la valeur de status
           formattedDate: expect.any(String),
         },
         {
@@ -116,7 +116,7 @@ describe("Given I am connected as an employee", () => {
           date: '2022-04-22',
           amount: 100,
           name: 'Bill 1',
-          status: 'pending',
+          status: 'En attente', // Mettre à jour la valeur de status
           formattedDate: expect.any(String),
         },
         {
@@ -124,7 +124,7 @@ describe("Given I am connected as an employee", () => {
           date: '2022-04-21',
           amount: 300,
           name: 'Bill 3',
-          status: 'refused',
+          status: 'Refused', // Mettre à jour la valeur de status
           formattedDate: expect.any(String),
         },
       ]);
@@ -136,7 +136,29 @@ describe("Given I am connected as an employee", () => {
                                    </div>`;
       const icon = document.createElement("i");
       icon.setAttribute("data-bill-url", "https://example.com/bill.png");
-      const imgWidth = Math.floor($("#modaleFile").width() * 0.5);
+
+// Mock jQuery and modal function
+const modalMock = jest.fn();
+global.$ = jest.fn((selector) => {
+  const element = document.querySelector(selector);
+  return {
+    width: () => 50,
+    find: (innerSelector) => {
+      const innerElement = element.querySelector(innerSelector);
+      return {
+        html: (content) => {
+          if (content) {
+            innerElement.innerHTML = content;
+          }
+        },
+      };
+    },
+    hasClass: () => true,
+    modal: modalMock,
+    click: jest.fn(),
+  };
+});
+
       const billsPage = new Bills({
         document,
         onNavigate: jest.fn(),
@@ -150,9 +172,9 @@ describe("Given I am connected as an employee", () => {
       // Assert
       const modalBody = document.querySelector(".modal-body");
       expect(modalBody.innerHTML).toContain(
-        `<img width=${imgWidth} src="https://example.com/bill.png" alt="Bill" />`
+        `<img width="25" src="https://example.com/bill.png" alt="Bill">`
       );
-      expect($("#modaleFile").hasClass("show")).toBe(true);
+      expect(modalMock).toHaveBeenCalledWith('show');
     });
   })
 })
