@@ -7,7 +7,34 @@ import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 
 
-describe("Given I am connected as an employee", () => {
+describe("When I am on NewBill Page", () => {
+  let newBillInstance;
+
+  beforeEach(() => {
+    // Setup
+    const html = NewBillUI();
+    document.body.innerHTML = html;
+    const onNavigate = jest.fn();
+    const storeMock = {
+      bills: jest.fn().mockReturnValue({
+        create: jest.fn(),
+      }),
+    };
+    window.localStorage.setItem(
+      "user",
+      JSON.stringify({ type: "Employee", email: "test@employee.com" })
+    );
+    newBillInstance = new NewBill({
+      document,
+      onNavigate,
+      store: storeMock,
+      localStorage: window.localStorage,
+    });
+  });
+  
+  afterEach(() => {
+    window.localStorage.clear();
+  });
   describe("When I am on NewBill Page", () => {
     test("Then form elements should be rendered", () => {
       // Setup
@@ -92,6 +119,32 @@ describe("Given I am connected as an employee", () => {
 
         expect(createMock).not.toHaveBeenCalled();
         expect(fileInput.value).toBe("");
+      });
+    });
+    describe("When I submit the form", () => {
+      test("Then the updateBill method should be called", () => {
+        // Setup
+        const updateBillMock = jest.fn();
+        newBillInstance.updateBill = updateBillMock;
+        newBillInstance.fileUrl = "https://example.com"; // Add this line
+        const formNewBill = document.querySelector(`form[data-testid="form-new-bill"]`);
+        
+        // Fill required fields
+        const expenseTypeSelect = document.querySelector(`select[data-testid="expense-type"]`);
+        const expenseNameInput = document.querySelector(`input[data-testid="expense-name"]`);
+        const amountInput = document.querySelector(`input[data-testid="amount"]`);
+        const datepickerInput = document.querySelector(`input[data-testid="datepicker"]`);
+    
+        expenseTypeSelect.value = "Restaurant";
+        expenseNameInput.value = "Test expense";
+        amountInput.value = "100";
+        datepickerInput.value = "2023-05-05";
+    
+        // Act
+        formNewBill.dispatchEvent(new Event("submit"));
+    
+        // Assert
+        expect(updateBillMock).toHaveBeenCalled();
       });
     });
   
