@@ -2,8 +2,6 @@ import { screen, fireEvent } from "@testing-library/dom";
 import NewBillUI from "../views/NewBillUI.js";
 import NewBill from "../containers/NewBill.js";
 
-//Test d'intégration 
-
 describe("Integration test - NewBill", () => {
   let newBillInstance;
 

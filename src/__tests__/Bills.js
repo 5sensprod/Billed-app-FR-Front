@@ -137,27 +137,27 @@ describe("Given I am connected as an employee", () => {
       const icon = document.createElement("i");
       icon.setAttribute("data-bill-url", "https://example.com/bill.png");
 
-// Mock jQuery and modal function
-const modalMock = jest.fn();
-global.$ = jest.fn((selector) => {
-  const element = document.querySelector(selector);
-  return {
-    width: () => 50,
-    find: (innerSelector) => {
-      const innerElement = element.querySelector(innerSelector);
-      return {
-        html: (content) => {
-          if (content) {
-            innerElement.innerHTML = content;
-          }
-        },
-      };
-    },
-    hasClass: () => true,
-    modal: modalMock,
-    click: jest.fn(),
-  };
-});
+      // Mock jQuery and modal function
+      const modalMock = jest.fn();
+      global.$ = jest.fn((selector) => {
+        const element = document.querySelector(selector);
+        return {
+          width: () => 50,
+          find: (innerSelector) => {
+            const innerElement = element.querySelector(innerSelector);
+            return {
+              html: (content) => {
+                if (content) {
+                  innerElement.innerHTML = content;
+                }
+              },
+            };
+          },
+          hasClass: () => true,
+          modal: modalMock,
+          click: jest.fn(),
+        };
+      });
 
       const billsPage = new Bills({
         document,

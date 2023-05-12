@@ -242,37 +242,93 @@ describe("Given that I am a user on login page", () => {
 
 
 
-    // test handle submit admin
-    
-    // describe("Given that I am a user on the login page as an admin", () => {
-    //   describe("When I submit the admin login form with valid credentials", () => {
-    //     test("handleSubmitAdmin retrieves email and password from the correct input fields", () => {
-    //       document.body.innerHTML = LoginUI();
-    //       const onNavigate = jest.fn();
-    //       const localStorage = {};
-    //       const PREVIOUS_LOCATION = '';
-    //       const store = {};
-    
-    //       const login = new Login({ document, localStorage, onNavigate, PREVIOUS_LOCATION, store });
-    //       const emailInput = screen.getByTestId("admin-email-input");
-    //       const passwordInput = screen.getByTestId("admin-password-input");
-    //       const email = "admin@example.com";
-    //       const password = "password";
-    //       fireEvent.change(emailInput, { target: { value: email } });
-    //       fireEvent.change(passwordInput, { target: { value: password } });
-    //       const form = screen.getByTestId("form-admin");
-    //       const handleSubmitAdmin = jest.spyOn(login, "handleSubmitAdmin");
-    //       form.addEventListener("submit", handleSubmitAdmin);
-    //       fireEvent.submit(form);
+// test handle submit admin
+
+describe("Given that I am a user on the login page as an admin", () => {
+  describe("When I submit the admin login form with valid credentials", () => {
+    test("handleSubmitAdmin retrieves email and password from the correct input fields", () => {
+      const localStorageMock = {
+        getItem: jest.fn(),
+        setItem: jest.fn(),
+        clear: jest.fn()
+      };
+      global.localStorage = localStorageMock
+
+      const storeMock = {
+        login: jest.fn().mockResolvedValue({}),
+        // Ajoutez d'autres méthodes si nécessaire
+      };
+
+      document.body.innerHTML = LoginUI();
+      const onNavigate = jest.fn();
+      const PREVIOUS_LOCATION = '';
+
+      const login = new Login({ document, localStorage: global.localStorage, onNavigate, PREVIOUS_LOCATION, store: storeMock });
+      const emailInput = screen.getByTestId("admin-email-input");
+      const passwordInput = screen.getByTestId("admin-password-input");
+      const email = "admin@example.com";
+      const password = "password";
+      fireEvent.change(emailInput, { target: { value: email } });
+      fireEvent.change(passwordInput, { target: { value: password } });
+      const form = screen.getByTestId("form-admin");
+      const handleSubmitAdmin = jest.spyOn(login, "handleSubmitAdmin");
+      form.addEventListener("submit", handleSubmitAdmin);
+      fireEvent.submit(form);
+
+      // Expect the handleSubmitAdmin function to receive an event object containing the correct input values
+      expect(handleSubmitAdmin).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({
+            querySelector: expect.any(Function),
+          }),
+        })
+      );
+    });
+  });
+});
+
+
+    // test handle submit employee
+
+    describe("Given that I am a user on the login page as an employee", () => {
+      describe("When I submit the employee login form with valid credentials", () => {
+        test("handleSubmitEmployee retrieves email and password from the correct input fields", () => {
+          const localStorageMock = {
+            getItem: jest.fn(),
+            setItem: jest.fn(),
+            clear: jest.fn()
+          };
+          global.localStorage = localStorageMock
           
-    //       // Expect the handleSubmitAdmin function to receive an event object containing the correct input values
-    //       expect(handleSubmitAdmin).toHaveBeenCalledWith(
-    //         expect.objectContaining({
-    //           target: expect.objectContaining({
-    //             querySelector: expect.any(Function),
-    //           }),
-    //         })
-    //       );
-    //     });
-    //   });
-    // });
+          const storeMock = {
+            login: jest.fn().mockResolvedValue({}),
+            // Ajoutez d'autres méthodes si nécessaire
+          };
+    
+          document.body.innerHTML = LoginUI();
+          const onNavigate = jest.fn();
+          const PREVIOUS_LOCATION = '';
+    
+          const login = new Login({ document, localStorage: global.localStorage, onNavigate, PREVIOUS_LOCATION, store: storeMock });
+          const emailInput = screen.getByTestId("employee-email-input");
+          const passwordInput = screen.getByTestId("employee-password-input");
+          const email = "employee@example.com";
+          const password = "password";
+          fireEvent.change(emailInput, { target: { value: email } });
+          fireEvent.change(passwordInput, { target: { value: password } });
+          const form = screen.getByTestId("form-employee");
+          const handleSubmitEmployee = jest.spyOn(login, "handleSubmitEmployee");
+          form.addEventListener("submit", handleSubmitEmployee);
+          fireEvent.submit(form);
+       
+          // Expect the handleSubmitEmployee function to receive an event object containing the correct input values
+          expect(handleSubmitEmployee).toHaveBeenCalledWith(
+            expect.objectContaining({
+              target: expect.objectContaining({
+                querySelector: expect.any(Function),
+              }),
+            })
+          );
+        });
+      });
+    });

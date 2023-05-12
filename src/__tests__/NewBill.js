@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from "@testing-library/dom"
+// import { screen } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 
@@ -38,7 +38,7 @@ describe("Given I am connected as an employee", () => {
     describe("When I upload a file", () => {
       let newBillInstance;
       let createMock;
-    
+
       beforeEach(() => {
         window.localStorage.setItem(
           "user",
@@ -50,7 +50,7 @@ describe("Given I am connected as an employee", () => {
             create: createMock,
           }),
         };
-      
+
         newBillInstance = new NewBill({
           document,
           onNavigate: jest.fn(),
@@ -58,7 +58,7 @@ describe("Given I am connected as an employee", () => {
           localStorage: window.localStorage,
         });
       });
-    
+
       afterEach(() => {
         window.localStorage.clear(); // Ajoutez cette ligne
       });
@@ -94,6 +94,6 @@ describe("Given I am connected as an employee", () => {
         expect(fileInput.value).toBe("");
       });
     });
-  
+
   });
 });
