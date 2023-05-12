@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
-// import { screen } from "@testing-library/dom"
+import { ROUTES_PATH } from '../constants/routes.js'
+
+// import { fireEvent, screen } from "@testing-library/dom";
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 
@@ -95,5 +97,79 @@ describe("Given I am connected as an employee", () => {
       });
     });
 
+  });
+});
+
+describe("When I submit the form", () => {
+  test("Then it should call updateBill method and navigate to Bills page", () => {
+    // Setup
+    const html = NewBillUI();
+    document.body.innerHTML = html;
+    const onNavigateMock = jest.fn();
+    const updateMock = jest.fn().mockResolvedValue({});
+    const storeMock = {
+      bills: jest.fn().mockReturnValue({
+        update: updateMock,
+      }),
+    };
+    window.localStorage.setItem(
+      "user",
+      JSON.stringify({ type: "Employee", email: "test@employee.com" })
+    );
+    const newBillInstance = new NewBill({
+      document,
+      onNavigate: onNavigateMock,
+      store: storeMock,
+      localStorage: window.localStorage,
+    });
+
+    // Act
+    const form = document.querySelector(`form[data-testid="form-new-bill"]`);
+    const event = {
+      preventDefault: jest.fn(),
+      target: {
+        querySelector: jest.fn().mockReturnValue({
+          value: "value",
+        }),
+      },
+    };
+    newBillInstance.handleSubmit(event);
+
+    // Assert
+    expect(updateMock).toHaveBeenCalled();
+    expect(onNavigateMock).toHaveBeenCalledWith(ROUTES_PATH['Bills']);
+  });
+
+  test("Then it should console log the error", () => {
+    console.error = jest.fn();
+
+    const errorMock = new Error('an error occurred');
+    const updateMock = jest.fn().mockRejectedValue(errorMock);
+    const storeMock = {
+      bills: jest.fn().mockReturnValue({
+        update: updateMock,
+      }),
+    };
+
+    const newBillInstance = new NewBill({
+      document,
+      onNavigate: jest.fn(),
+      store: storeMock,
+      localStorage: window.localStorage,
+    });
+
+    const form = document.querySelector(`form[data-testid="form-new-bill"]`);
+    const event = { preventDefault: jest.fn(), target: form };
+
+    // we use a Promise to handle the asynchronous nature of the function
+    return Promise.resolve(newBillInstance.handleSubmit(event))
+      .then(() => {
+        // the promise was resolved, we don't expect this to happen in this test
+        expect(true).toBe(false);
+      })
+      .catch(() => {
+        // the promise was rejected, we check if console.error was called
+        expect(console.error).toHaveBeenCalledWith(errorMock);
+      });
   });
 });
