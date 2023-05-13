@@ -7,9 +7,7 @@ import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import { ROUTES_PATH } from "../constants/routes.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
-
 import Bills from '../containers/Bills.js';
-
 import router from "../app/Router.js";
 
 describe("Given I am connected as an employee", () => {
@@ -128,7 +126,9 @@ describe("Given I am connected as an employee", () => {
           formattedDate: expect.any(String),
         },
       ]);
+      
     })
+
     test("should open the modal and display the bill image", () => {
       // Set up
       document.body.innerHTML = `<div id="modaleFile">
@@ -175,6 +175,23 @@ describe("Given I am connected as an employee", () => {
         `<img width="25" src="https://example.com/bill.png" alt="Bill">`
       );
       expect(modalMock).toHaveBeenCalledWith('show');
+    });
+
+    test("Then eye icons should have 'click' event listener", () => {
+      const mockElement = {
+        addEventListener: jest.fn(),
+        getAttribute: jest.fn().mockReturnValue("https://example.com/bill.png"),
+      };
+      document.querySelectorAll = jest.fn().mockReturnValue([mockElement]);
+      
+      const billPage = new Bills({
+        document,
+        onNavigate: jest.fn(),
+        store: null,
+        localStorage: window.localStorage,
+      });
+
+      expect(mockElement.addEventListener).toHaveBeenCalledWith('click', expect.any(Function));
     });
   })
 })
