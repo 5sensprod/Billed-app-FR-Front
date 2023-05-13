@@ -256,7 +256,6 @@ describe("Given that I am a user on the login page as an admin", () => {
 
       const storeMock = {
         login: jest.fn().mockResolvedValue({}),
-        // Ajoutez d'autres méthodes si nécessaire
       };
 
       document.body.innerHTML = LoginUI();
@@ -302,7 +301,6 @@ describe("Given that I am a user on the login page as an employee", () => {
 
       const storeMock = {
         login: jest.fn().mockResolvedValue({}),
-        // Ajoutez d'autres méthodes si nécessaire
       };
 
       document.body.innerHTML = LoginUI();

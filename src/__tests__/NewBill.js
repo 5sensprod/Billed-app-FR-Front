@@ -4,7 +4,7 @@
 
 import { ROUTES_PATH } from '../constants/routes.js'
 
-// import { fireEvent, screen } from "@testing-library/dom";
+import { fireEvent, screen } from "@testing-library/dom";
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 
@@ -161,15 +161,71 @@ describe("When I submit the form", () => {
     const form = document.querySelector(`form[data-testid="form-new-bill"]`);
     const event = { preventDefault: jest.fn(), target: form };
 
-    // we use a Promise to handle the asynchronous nature of the function
+    // Use a Promise to handle the asynchronous nature of the function
     return Promise.resolve(newBillInstance.handleSubmit(event))
       .then(() => {
-        // the promise was resolved, we don't expect this to happen in this test
+        // the promise was resolved, don't expect this to happen in this test
         expect(true).toBe(false);
       })
       .catch(() => {
-        // the promise was rejected, we check if console.error was called
+        // the promise was rejected, check if console.error was called
         expect(console.error).toHaveBeenCalledWith(errorMock);
       });
   });
 });
+
+// Test d'intégration POST
+describe("Integration test - NewBill", () => {
+  let newBillInstance;
+
+  beforeEach(() => {
+    const html = NewBillUI();
+    document.body.innerHTML = html;
+    const onNavigate = jest.fn();
+    const storeMock = {
+      bills: jest.fn().mockReturnValue({
+        create: jest.fn(),
+        update: jest.fn(),
+      }),
+    };
+    window.localStorage.setItem(
+      "user",
+      JSON.stringify({ type: "Employee", email: "test@employee.com" })
+    );
+    newBillInstance = new NewBill({
+      document,
+      onNavigate,
+      store: storeMock,
+      localStorage: window.localStorage,
+    });
+  });
+
+  afterEach(() => {
+    window.localStorage.clear();
+  });
+
+  test("should submit the form and call updateBill method", () => {
+    // Fill the required fields
+    const expenseTypeSelect = screen.getByTestId("expense-type");
+    const expenseNameInput = screen.getByTestId("expense-name");
+    const amountInput = screen.getByTestId("amount");
+    const datepickerInput = screen.getByTestId("datepicker");
+
+    fireEvent.change(expenseTypeSelect, { target: { value: "Restaurant" } });
+    fireEvent.change(expenseNameInput, { target: { value: "Test expense" } });
+    fireEvent.change(amountInput, { target: { value: "100" } });
+    fireEvent.change(datepickerInput, { target: { value: "2023-05-05" } });
+
+    // Mock the updateBill method
+    newBillInstance.updateBill = jest.fn();
+
+    // Submit the form
+    const formNewBill = screen.getByTestId("form-new-bill");
+    fireEvent.submit(formNewBill);
+
+    // Verify that updateBill method is called
+    expect(newBillInstance.updateBill).toHaveBeenCalled();
+  });
+
+});
+
