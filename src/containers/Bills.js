@@ -27,15 +27,7 @@ export default class {
     $('#modaleFile').modal('show')
   }
 
-
-  
-  getBills = () => {  
-    
-    function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-  
+  getBills = () => {
     if (this.store) {
       return this.store
         .bills()
@@ -46,7 +38,8 @@ export default class {
               try {
                 return {
                   ...doc,
-                  date: formatDate(doc.date), // utilisation de la date formatée
+                  // utilisation de la date formatée
+                  formattedDate: formatDate(doc.date),
                   status: formatStatus(doc.status)
                 }
               } catch (e) {
